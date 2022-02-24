@@ -1,6 +1,5 @@
 import express from "express";
 import connectDB from "./db/mongoose.js";
-import multer from "multer";
 import authRoutes from "./src/routes/auth.js";
 import restaurantRoutes from "./src/routes/restaurant.js";
 
