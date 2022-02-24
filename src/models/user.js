@@ -3,22 +3,21 @@ import mongoose from "mongoose";
 const { model, Schema } = mongoose;
 
 const userSchema = new Schema({
-  name: {
+  phoneNumber: {
     type: String,
     required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
   },
   role: {
     type: String,
     required: true,
   },
-  password: {
+  verified: {
+    type: Boolean,
+    default: false,
+  },
+  otp: {
     type: String,
-    required: true,
+    default: null,
   },
 });
 

@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import drive from "../../controllers/drive.js";
+import drive from "../../helpers/drive.js";
 import {
   validateRestaurantRegisterBody,
   validateRestaurantUpdateBody,

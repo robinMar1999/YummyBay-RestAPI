@@ -6,58 +6,76 @@ import User from "../models/user.js";
 import { validateRegBody, validateLoginBody } from "../middlewares/validate.js";
 import auth from "../middlewares/auth.js";
 import config from "../../config/config.js";
+import sendOtp from "../../helpers/sendOtp.js";
 
 const router = Router();
 
-// @route   POST auth/register
-// @desc    Register New User
+// @route   POST auth/getotp
+// @desc    Get otp to verify number
 // @access  Public
-router.post("/register", validateRegBody, async (req, res) => {
+router.post("/getotp", async (req, res) => {
   try {
-    console.log(req.body);
-    const { name, email, role, password } = req.body;
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    const user = new User({
-      name,
-      email,
-      role,
-      password: hashedPassword,
-    });
+    const { phoneNumber, role } = req.body;
+    const { otp } = await sendOtp(phoneNumber);
+    let user = await User.findOne({ phoneNumber, role });
+    if (!user) {
+      user = new User({
+        phoneNumber,
+        role,
+        otp,
+      });
+    } else {
+      user.otp = otp;
+    }
     await user.save();
     const payload = {
       id: user.id,
-      role,
+      sentAt: new Date(),
+      isLoggedIn: false,
     };
     const token = jwt.sign(payload, config.jwtSecret);
-    res.status(201).json({ token });
+    res.status(201).json({ status: 1, msg: "Otp sent successfully", token });
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ error: "Server Error" });
   }
 });
 
-// @route   POST auth/login
-// @desc    Login User
-// @access  Public
-router.post("/login", validateLoginBody, async (req, res) => {
+// @route   POST auth/verify
+// @desc    Verify Otp
+// @access  Private
+router.post("/verify", auth, async (req, res) => {
   try {
-    const { email, role, password } = req.body;
-
-    const user = await User.findOne({ email, role });
-    if (!user) {
-      return res.status(400).json({ msg: "Invalid Credentials" });
+    const { otp, enteredAt } = req.body;
+    const { sentAt } = req.decoded;
+    const enteredTime = parseInt(new Date(enteredAt).getTime());
+    const sentTime = parseInt(new Date(sentAt).getTime());
+    if (enteredTime - sentTime > 2 * 60 * 1000) {
+      res.status(400).json({ status: 0, msg: "Sorry, You are a bit late" });
+    } else {
+      const user = await User.findById(req.decoded.id);
+      if (!user) {
+        return res.status(404).json({ status: 0, msg: "User Not Found" });
+      }
+      if (user.otp === otp) {
+        user.verified = true;
+        user.otp = null;
+        await user.save();
+        const payload = {
+          id: user.id,
+          role: user.role,
+          isLoggedIn: true,
+        };
+        const token = jwt.sign(payload, config.jwtSecret);
+        res.status(200).json({
+          status: 1,
+          msg: "Phone number verified successfully",
+          token,
+        });
+      } else {
+        res.status(400).json({ status: 0, msg: "Wrong otp" });
+      }
     }
-    const isPasswordMatched = await bcrypt.compare(password, user.password);
-    if (!isPasswordMatched) {
-      return res.status(400).json({ msg: "Invalid Credentials" });
-    }
-    const payload = {
-      id: user.id,
-      role,
-    };
-    const token = jwt.sign(payload, config.jwtSecret);
-    res.status(201).json({ token });
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ error: "Server Error" });
@@ -65,12 +83,12 @@ router.post("/login", validateLoginBody, async (req, res) => {
 });
 
 // @route   Get auth/
-// @desc    Test route to check authentication
-// @access  Private
-router.get("/", auth, async (req, res) => {
+// @desc    Test route to delete all users
+// @access  Public
+router.delete("/", async (req, res) => {
   try {
-    console.log(req.body);
-    res.json({ msg: "Authentication Successful" });
+    await User.deleteMany();
+    res.json({ msg: "Delete All Users!" });
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ error: "Server Error" });
