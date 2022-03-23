@@ -7,6 +7,12 @@ const restaurantSchema = new Schema({
     type: String,
     required: true,
   },
+  user: {
+    type: Schema.Types.ObjectId,
+    unique: true,
+    required: true,
+    ref: "user",
+  },
   address: {
     type: String,
     required: true,

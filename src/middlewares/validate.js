@@ -261,6 +261,8 @@ export const validateRestaurantUpdateBody = async (req, res, next) => {
   }
 };
 
+export const validateDishRegisterBody = async (req, res, next) => {};
+
 const validate = {
   validateLoginBody,
   validateRegBody,

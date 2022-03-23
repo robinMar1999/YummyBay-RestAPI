@@ -1,36 +1,40 @@
 import express from "express";
 import multer from "multer";
-import drive from "../../helpers/drive.js";
+import drive from "../../../helpers/drive.js";
 import {
   validateRestaurantRegisterBody,
   validateRestaurantUpdateBody,
-} from "../middlewares/validate.js";
-import Restaurant from "../models/restaurant.js";
+} from "../../middlewares/validate.js";
+import Restaurant from "../../models/restaurant.js";
+import auth from "../../middlewares/auth.js";
 
 const router = express.Router();
 const upload = multer();
 
-// @route   POST restaurant/register
-// @desc    Register Restaurant
+// @route   POST restaurant/profile
+// @desc    Add profile for restaurant
 // @access  Public
 router.post(
-  "/register",
+  "/",
+  auth,
   upload.single("photo"),
   validateRestaurantRegisterBody,
   async (req, res) => {
     try {
+      const { id } = req.decoded;
       let result = null;
-      console.log(req.file);
       if (req.file) {
         result = await drive.uploadFile(req.file);
       }
       const restaurant = new Restaurant({
         ...req.body,
         imageDetails: result,
+        user: id,
       });
       await restaurant.save();
       res.json(restaurant);
     } catch (err) {
+      console.log(err);
       console.log(err.message);
       res.status(500).json({ msg: "Server Error!" });
     }
@@ -42,6 +46,7 @@ router.post(
 // @access  Public
 router.patch(
   "/update/:id",
+  auth,
   upload.single("photo"),
   validateRestaurantUpdateBody,
   async (req, res) => {

@@ -1,17 +1,17 @@
 import { google } from "googleapis";
-import { get } from "../config/config.js";
+import config from "../config/config.js";
 import { createReadStream } from "streamifier";
 import { lookup } from "mime-types";
 
 const GOOGLE_CLIENT_ID =
-  process.env.GOOGLE_CLIENT_ID || get("GOOGLE_CLIENT_ID");
+  process.env.GOOGLE_CLIENT_ID || config.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET =
-  process.env.GOOGLE_CLIENT_SECRET || get("GOOGLE_CLIENT_SECRET");
+  process.env.GOOGLE_CLIENT_SECRET || config.GOOGLE_CLIENT_SECRET;
 const GOOGLE_REDIRECT_URI =
-  process.env.GOOGLE_REDIRECT_URI || get("GOOGLE_REDIRECT_URI");
+  process.env.GOOGLE_REDIRECT_URI || config.GOOGLE_REDIRECT_URI;
 const GOOGLE_REFRESH_TOKEN =
-  process.env.GOOGLE_REFRESH_TOKEN || get("GOOGLE_REFRESH_TOKEN");
-const DRIVE_FOLDER_ID = process.env.DRIVE_FOLDER_ID || get("DRIVE_FOLDER_ID");
+  process.env.GOOGLE_REFRESH_TOKEN || config.GOOGLE_REFRESH_TOKEN;
+const DRIVE_FOLDER_ID = process.env.DRIVE_FOLDER_ID || config.DRIVE_FOLDER_ID;
 
 const oauth2client = new google.auth.OAuth2(
   GOOGLE_CLIENT_ID,
@@ -56,7 +56,7 @@ const uploadFile = async (file) => {
       name: response.data.name,
     };
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
     throw new Error(err.message);
   }
 };

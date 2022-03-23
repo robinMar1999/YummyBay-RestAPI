@@ -3,10 +3,12 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import User from "../models/user.js";
-import { validateRegBody, validateLoginBody } from "../middlewares/validate.js";
 import auth from "../middlewares/auth.js";
 import config from "../../config/config.js";
 import sendOtp from "../../helpers/sendOtp.js";
+import cout from "../../test.js";
+
+cout("Hello from auth", "hello again...");
 
 const router = Router();
 
@@ -15,12 +17,12 @@ const router = Router();
 // @access  Public
 router.post("/getotp", async (req, res) => {
   try {
-    const { phoneNumber, role } = req.body;
-    const { otp } = await sendOtp(phoneNumber);
-    let user = await User.findOne({ phoneNumber, role });
+    const { email, role } = req.body;
+    const { result, otp } = await sendOtp(email);
+    let user = await User.findOne({ email, role });
     if (!user) {
       user = new User({
-        phoneNumber,
+        email,
         role,
         otp,
       });
@@ -36,7 +38,7 @@ router.post("/getotp", async (req, res) => {
     const token = jwt.sign(payload, config.jwtSecret);
     res.status(201).json({ status: 1, msg: "Otp sent successfully", token });
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
     res.status(500).json({ error: "Server Error" });
   }
 });
