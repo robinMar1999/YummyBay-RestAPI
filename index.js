@@ -4,7 +4,6 @@ import authRoutes from "./src/routes/auth.js";
 import addRestaurantRoutes from "./src/routes/restaurant/index.js";
 import addCustomerRoutes from "./src/routes/customer/index.js";
 import cors from "cors";
-import cout from "./test.js";
 
 const app = express();
 const port = process.env.PORT || 5000;

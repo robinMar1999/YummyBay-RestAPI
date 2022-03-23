@@ -6,9 +6,6 @@ import User from "../models/user.js";
 import auth from "../middlewares/auth.js";
 import config from "../../config/config.js";
 import sendOtp from "../../helpers/sendOtp.js";
-import cout from "../../test.js";
-
-cout("Hello from auth", "hello again...");
 
 const router = Router();
 
