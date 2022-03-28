@@ -34,7 +34,12 @@ router.post("/", auth, async (req, res) => {
 router.get("/", auth, async (req, res) => {
   try {
     const { id } = req.decoded;
-  } catch (err) {}
+    const orders = await Order.find({ customer: id }).populate("dishes.dish");
+    res.json({ status: 1, msg: "Fetched orders successfully", orders });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ status: 0, msg: "Server Error" });
+  }
 });
 
 export default router;

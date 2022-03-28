@@ -41,4 +41,18 @@ router.get("/order", auth, async (req, res) => {
   }
 });
 
+router.patch("/deliver/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findById(id).populate("dishes.dish");
+    order.status = 1;
+    await order.save();
+    console.log(id);
+    res.json({ status: 1, msg: "order delivered", order });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ status: 0, msg: "Server Error" });
+  }
+});
+
 export default router;
