@@ -7,33 +7,16 @@ const dishSchema = new Schema({
     type: String,
     required: true,
   },
-  preparationTime: {
-    type: Number,
-    required: true,
-  },
-  category:{
-    type:String,
-    required :true,
-  },
-  type:{
-    type:String,
-    required:true,
-  },
-  description:{
-    type:String,
-    required:true,
-  },
   price: {
     type: Number,
     required: true,
   },
-  imageUrl: {
-    type: String,
-    required: true,
+  imageDetails: {
+    type: Object,
   },
   restaurantRef: {
     type: Schema.Types.ObjectId,
-    ref: "restaurant",
+    ref: "user",
     required: true,
   },
 });

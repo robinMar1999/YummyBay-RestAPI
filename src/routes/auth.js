@@ -17,6 +17,7 @@ router.post("/getotp", async (req, res) => {
     const { email, role } = req.body;
     const { result, otp } = await sendOtp(email);
     let user = await User.findOne({ email, role });
+
     if (!user) {
       user = new User({
         email,
@@ -49,13 +50,16 @@ router.post("/verify", auth, async (req, res) => {
     const { sentAt } = req.decoded;
     const enteredTime = parseInt(new Date(enteredAt).getTime());
     const sentTime = parseInt(new Date(sentAt).getTime());
+    console.log(otp, enteredAt, sentAt, enteredTime, sentTime);
     if (enteredTime - sentTime > 2 * 60 * 1000) {
+      console.log("from here");
       res.status(400).json({ status: 0, msg: "Sorry, You are a bit late" });
     } else {
       const user = await User.findById(req.decoded.id);
       if (!user) {
         return res.status(404).json({ status: 0, msg: "User Not Found" });
       }
+      console.log(user);
       if (user.otp === otp) {
         user.verified = true;
         user.otp = null;
@@ -72,6 +76,7 @@ router.post("/verify", auth, async (req, res) => {
           token,
         });
       } else {
+        console.log("Wrong Otp error");
         res.status(400).json({ status: 0, msg: "Wrong otp" });
       }
     }

@@ -17,16 +17,6 @@ const restaurantSchema = new Schema({
     type: String,
     required: true,
   },
-  ownerEmail: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  invoicingEmail: {
-    type: String,
-    required: true,
-    unique: true,
-  },
   latitude: {
     type: Number,
     required: true,
@@ -35,32 +25,8 @@ const restaurantSchema = new Schema({
     type: Number,
     required: true,
   },
-  ownerPhone: {
+  phone: {
     type: Number,
-    required: true,
-  },
-  managerPhone: {
-    type: Number,
-    required: true,
-  },
-  whatsapp: {
-    type: Number,
-    required: true,
-  },
-  bankac: {
-    type: String,
-    required: true,
-  },
-  ifsc: {
-    type: String,
-    required: true,
-  },
-  openingTime: {
-    type: String,
-    required: true,
-  },
-  closingTime: {
-    type: String,
     required: true,
   },
   imageDetails: {

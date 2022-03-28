@@ -14,32 +14,27 @@ const upload = multer();
 // @route   POST restaurant/profile
 // @desc    Add profile for restaurant
 // @access  Public
-router.post(
-  "/",
-  auth,
-  upload.single("photo"),
-  validateRestaurantRegisterBody,
-  async (req, res) => {
-    try {
-      const { id } = req.decoded;
-      let result = null;
-      if (req.file) {
-        result = await drive.uploadFile(req.file);
-      }
-      const restaurant = new Restaurant({
-        ...req.body,
-        imageDetails: result,
-        user: id,
-      });
-      await restaurant.save();
-      res.json(restaurant);
-    } catch (err) {
-      console.log(err);
-      console.log(err.message);
-      res.status(500).json({ msg: "Server Error!" });
+router.post("/", auth, upload.single("photo"), async (req, res) => {
+  try {
+    const { id } = req.decoded;
+    let result = null;
+    if (req.file) {
+      result = await drive.uploadFile(req.file);
     }
+    console.log(result);
+    const restaurant = new Restaurant({
+      ...req.body,
+      imageDetails: result,
+      user: id,
+    });
+    await restaurant.save();
+    res.json(restaurant);
+  } catch (err) {
+    console.log(err);
+    console.log(err.message);
+    res.status(500).json({ msg: "Server Error!" });
   }
-);
+});
 
 // @route   PATCH restaurant/update
 // @desc    Update Restaurant

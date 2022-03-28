@@ -1,0 +1,44 @@
+import express from "express";
+import Restaurant from "../../models/restaurant.js";
+import Dish from "../../models/dish.js";
+import auth from "../../middlewares/auth.js";
+import Order from "../../models/order.js";
+
+const router = express.Router();
+
+router.get("/near-me", async (req, res) => {
+  try {
+    const restaurants = await Restaurant.find();
+    return res.json({ status: 1, restaurants });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ status: 0, msg: "Server Error" });
+  }
+});
+
+router.get("/details/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const restaurant = await Restaurant.findOne({ user: id });
+    const dishes = await Dish.find({ restaurantRef: id });
+    res.json({
+      status: 1,
+      msg: "details fetched successfully",
+      restaurant,
+      dishes,
+    });
+  } catch (err) {}
+});
+
+router.get("/order", auth, async (req, res) => {
+  try {
+    const { id } = req.decoded;
+    const orders = await Order.find({ restaurant: id }).populate("dishes.dish");
+    res.json({ status: 1, msg: "Fetched orders successfully", orders });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ status: 0, msg: "Server Error" });
+  }
+});
+
+export default router;

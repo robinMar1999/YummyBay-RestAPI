@@ -18,16 +18,15 @@ router.post("/", auth, upload.single("photo"), async (req, res) => {
   console.log(req.body);
   console.log(req.decoded);
   console.log(req.file);
-  let imageUrl = null;
+  let imageDetails = null;
   if (req.file) {
-    // Task = do drive.uploadFile
-    imageUrl = "some url";
+    imageDetails = await drive.uploadFile(req.file);
   }
   const dish = new Dish({
     name,
     preparationTime,
     price,
-    imageUrl,
+    imageDetails,
     restaurantRef: id,
   });
   await dish.save();
@@ -35,7 +34,7 @@ router.post("/", auth, upload.single("photo"), async (req, res) => {
 });
 
 // @route   GEt restaurant/dish
-// @desc    Add profile for restaurant
+// @desc    Get all dishes for a restaurant
 // @access  Public
 router.get("/", auth, async (req, res) => {
   // Task - validate body
