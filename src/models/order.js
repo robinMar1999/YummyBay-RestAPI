@@ -14,6 +14,11 @@ const orderSchema = new Schema(
       ref: "user",
       required: true,
     },
+    delivery: {
+      type: SchemaTypes.ObjectId,
+      ref: "user",
+      default: null,
+    },
     dishes: [
       {
         dish: {
@@ -30,7 +35,7 @@ const orderSchema = new Schema(
       required: true,
     },
     status: {
-      type: Number, // 0 means order placed, 1 means order delivered
+      type: Number, // 0 means order placed, 1 means handed, 2 means delivered
       default: 0,
     },
   },

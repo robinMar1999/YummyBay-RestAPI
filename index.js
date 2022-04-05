@@ -3,6 +3,7 @@ import connectDB from "./db/mongoose.js";
 import authRoutes from "./src/routes/auth.js";
 import addRestaurantRoutes from "./src/routes/restaurant/index.js";
 import addCustomerRoutes from "./src/routes/customer/index.js";
+import addDeliveryRoutes from "./src/routes/delivery/index.js";
 import cors from "cors";
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.json({ extended: false })); // to access req.body
 app.use("/auth", authRoutes);
 addRestaurantRoutes(app);
 addCustomerRoutes(app);
+addDeliveryRoutes(app);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);

@@ -41,7 +41,7 @@ router.get("/order", auth, async (req, res) => {
   }
 });
 
-router.patch("/deliver/:id", async (req, res) => {
+router.patch("/hand/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const order = await Order.findById(id).populate("dishes.dish");
