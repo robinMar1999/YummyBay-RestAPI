@@ -24,6 +24,7 @@
     "multer": "^1.4.4",
     "node-fetch": "^3.2.3",
     "otp-generator": "^4.0.0",
+    "razorpay": "^2.8.1",
     "streamifier": "^0.1.1",
     "twilio": "^3.75.0",
     "validator": "^13.7.0"

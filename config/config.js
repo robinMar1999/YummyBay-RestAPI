@@ -15,6 +15,8 @@ const config = {
   TWILIO_PHONE: "+18646616629",
   FAST2SMS_KEY:
     "PR4F0fHBwzxcSMv7gQGhl13y5ikCVYtTDO6rX2L8ab9WNAKndEywmBDRfWVoChuPE3TsFKYrQUdn8ivj",
+  RAZORPAY_ID: "rzp_test_XaCd95n1u53fkD",
+  RAZORPAY_SECRET: "BVjsQnUPGXiZw7V9BWWjbtxF",
 };
 
 // config.databaseUrl = "mongodb://localhost:27017/yummybay";

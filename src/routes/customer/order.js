@@ -1,4 +1,5 @@
 import express from "express";
+
 import auth from "../../middlewares/auth.js";
 import Order from "../../models/order.js";
 
@@ -17,6 +18,7 @@ router.post("/", auth, async (req, res) => {
       });
       totalPrice += item.dish.price * item.count;
     });
+
     const order = new Order({
       customer: id,
       restaurant: restaurantId,
