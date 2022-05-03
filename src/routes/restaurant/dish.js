@@ -8,7 +8,7 @@ const router = express.Router();
 const upload = multer();
 
 // @route   POST restaurant/dish
-// @desc    Add profile for restaurant
+// @desc
 // @access  Public
 router.post("/", auth, upload.single("photo"), async (req, res) => {
   // Task - validate body
@@ -47,11 +47,64 @@ router.get("/", auth, async (req, res) => {
     .json({ status: 1, msg: "Dishes fetched for this restaurant", dishes });
 });
 
-router.patch("/:dishId", auth, async (req, res) => {
+router.patch("/:dishId", auth, upload.array(), async (req, res) => {
   try {
     // Task - Complete this route
-  } catch (error) {}
+    const { id } = req.decoded;
+    const dish = await Dish.findById(req.params.dishId);
+    if (!dish) {
+      res.status(404).json({ status: 0, msg: "Dish Not Found" });
+    }
+    if (dish.restaurantRef.toString() !== id) {
+      res.status(401).json({ status: 0, msg: "Unauthorized Access" });
+    }
+    console.log(req.body);
+    for (let key in req.body) {
+      dish[key] = req.body[key];
+    }
+    await dish.save();
+    res.json({ status: 1, msg: "Dish updated", dish });
+  } catch (err) {
+    console.log(err);
+    console.log(err.message);
+    res.status(500).json({ msg: "Server Error!" });
+  }
 });
+
+router.patch(
+  "/:dishId/photo",
+  auth,
+  upload.single("photo"),
+  async (req, res) => {
+    try {
+      // Task - Complete this route
+      const { id } = req.decoded;
+      console.log(req.params);
+      const dish = await Dish.findById(req.params.dishId);
+      if (!dish) {
+        res.status(404).json({ status: 0, msg: "Dish Not Found" });
+      }
+      if (dish.restaurantRef.toString() !== id) {
+        res.status(401).json({ status: 0, msg: "Unauthorized Access" });
+      }
+      if (req.file) {
+        const photoId = dish.imageDetails.id;
+        let delResponse = null;
+        if (photoId) {
+          delResponse = await drive.deleteFile(photoId);
+        }
+        console.log(delResponse);
+        dish.imageDetails = await drive.uploadFile(req.file);
+      }
+      await dish.save();
+      res.json({ status: 1, msg: "Dish updated", dish });
+    } catch (err) {
+      console.log(err);
+      console.log(err.message);
+      res.status(500).json({ msg: "Server Error!" });
+    }
+  }
+);
 
 router.delete("/:dishId", auth, async (req, res) => {
   try {

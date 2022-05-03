@@ -74,6 +74,7 @@ router.post("/verify", auth, async (req, res) => {
           status: 1,
           msg: "Phone number verified successfully",
           token,
+          isProfileAdded: user.isProfileAdded,
         });
       } else {
         console.log("Wrong Otp error");

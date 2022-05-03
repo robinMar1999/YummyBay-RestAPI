@@ -19,6 +19,10 @@ const userSchema = new Schema({
     type: String,
     default: null,
   },
+  isProfileAdded: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const User = model("user", userSchema);

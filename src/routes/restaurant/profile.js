@@ -6,6 +6,7 @@ import {
   validateRestaurantUpdateBody,
 } from "../../middlewares/validate.js";
 import Restaurant from "../../models/restaurant.js";
+import User from "../../models/user.js";
 import auth from "../../middlewares/auth.js";
 
 const router = express.Router();
@@ -17,6 +18,8 @@ const upload = multer();
 router.post("/", auth, upload.single("photo"), async (req, res) => {
   try {
     const { id } = req.decoded;
+    console.log(id);
+    const user = await User.findById(id);
     let result = null;
     if (req.file) {
       result = await drive.uploadFile(req.file);
@@ -27,7 +30,10 @@ router.post("/", auth, upload.single("photo"), async (req, res) => {
       imageDetails: result,
       user: id,
     });
+
     await restaurant.save();
+    user.isProfileAdded = true;
+    await user.save();
     res.json(restaurant);
   } catch (err) {
     console.log(err);
@@ -36,39 +42,53 @@ router.post("/", auth, upload.single("photo"), async (req, res) => {
   }
 });
 
-// @route   PATCH restaurant/update
+// @route   PATCH restaurant/profile
 // @desc    Update Restaurant
 // @access  Public
-router.patch(
-  "/update/:id",
-  auth,
-  upload.single("photo"),
-  validateRestaurantUpdateBody,
-  async (req, res) => {
-    try {
-      const restaurant = await Restaurant.findById(req.params.id);
-      if (!restaurant) {
-        return res.status(404).json({ msg: "Restaurant Not Found!" });
-      }
-      for (let key in req.body) {
-        restaurant[key] = req.body[key];
-      }
-      if (req.file) {
-        const photoId = restaurant.imageDetails.id;
-        let delResponse = null;
-        if (photoId) {
-          delResponse = await drive.deleteFile(photoId);
-        }
-        console.log(delResponse);
-        restaurant.imageDetails = await drive.uploadFile(req.file);
-      }
-      await restaurant.save();
-      res.json(restaurant);
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).json({ msg: "Server Error!" });
+router.patch("/", auth, upload.array(), async (req, res) => {
+  try {
+    const { id } = req.decoded;
+    const restaurant = await Restaurant.findOne({ user: id });
+
+    if (!restaurant) {
+      return res.status(404).json({ msg: "Restaurant Not Found!" });
     }
+    for (let key in req.body) {
+      restaurant[key] = req.body[key];
+    }
+    await restaurant.save();
+    res.json(restaurant);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ msg: "Server Error!" });
   }
-);
+});
+
+// @route   PATCH restaurant/profile/photo
+// @desc    Update Restaurant
+// @access  Public
+router.patch("/photo", auth, upload.single("photo"), async (req, res) => {
+  try {
+    const { id } = req.decoded;
+    const restaurant = await Restaurant.findOne({ user: id });
+    if (!restaurant) {
+      return res.status(404).json({ msg: "Restaurant Not Found!" });
+    }
+    if (req.file) {
+      const photoId = restaurant.imageDetails.id;
+      let delResponse = null;
+      if (photoId) {
+        delResponse = await drive.deleteFile(photoId);
+      }
+      console.log(delResponse);
+      restaurant.imageDetails = await drive.uploadFile(req.file);
+    }
+    await restaurant.save();
+    res.json(restaurant);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ msg: "Server Error!" });
+  }
+});
 
 export default router;

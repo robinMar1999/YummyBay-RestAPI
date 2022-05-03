@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const { Schema, model } = mongoose;
 
-const customerSchema = new Schema({
+const deliverySchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -13,24 +13,12 @@ const customerSchema = new Schema({
     required: true,
     ref: "user",
   },
-  address: {
-    type: String,
-    required: true,
-  },
-  latitude: {
-    type: Number,
-    required: true,
-  },
-  longitude: {
-    type: Number,
-    required: true,
-  },
   phone: {
     type: Number,
     required: true,
   },
 });
 
-const Customer = model("customer", customerSchema);
+const Delivery = model("delivery", deliverySchema);
 
-export default Customer;
+export default Delivery;
