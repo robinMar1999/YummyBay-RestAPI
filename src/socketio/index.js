@@ -8,11 +8,8 @@ let deliveryNamespace;
 export const createIO = (server) => {
   io = new Server(server, {
     cors: {
-      origin: [
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://localhost:3002",
-      ],
+      origin: "*",
+      methods: ["GET", "POST"],
     },
   });
   customerNamespace = io.of("/customer");
