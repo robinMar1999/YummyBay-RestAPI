@@ -1,8 +1,8 @@
 const config = {
   jwtSecret: "thisisyummybay",
-  // databaseUrl:
-  //   "mongodb+srv://robin1999:generalatlas1998@cluster0.5lagq.mongodb.net/yummybay?retryWrites=true&w=majority",
-  databaseUrl: "mongodb://localhost:27017/yummybay",
+  databaseUrl:
+    "mongodb+srv://robin1999:generalatlas1998@cluster0.5lagq.mongodb.net/yummybay?retryWrites=true&w=majority",
+  // databaseUrl: "mongodb://localhost:27017/yummybay",
   GOOGLE_CLIENT_ID:
     "551621993702-c29obkogfq1cdrsjr98ma56qv1p3197f.apps.googleusercontent.com",
   GOOGLE_CLIENT_SECRET: "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",
